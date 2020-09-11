@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-import yaml
+
+import os
+from dotenv import load_dotenv
+# import yaml
 import random
 import discord
 from discord.ext import commands
@@ -8,17 +11,21 @@ from discord.ext import commands
 bot = commands.Bot(command_prefix="!")
 
 
-with open("config.yaml") as f:
-    """
-    config.yaml
+# with open("config.yaml") as f:
+#    """
+#    config.yaml
+#
+#    bot_token: <bot-token>
+#    guild_id: <guild-id>
+#    """
+#    config = yaml.load(f, Loader=yaml.FullLoader)
+#    BOT_TOKEN = config["bot_token"]
+#    GUILD_ID = config["guild_id"]
 
-    bot_token: <bot-token>
-    guild_id: <guild-id>
-    """
-    config = yaml.load(f, Loader=yaml.FullLoader)
-    BOT_TOKEN = config["bot_token"]
-    GUILD_ID = config["guild_id"]
 
+load_dotenv()
+BOT_TOKEN = os.getenv('BOT_TOKEN')
+GUILD_ID = os.getenv('GUILD_ID')
 
 @bot.event
 async def on_ready():
