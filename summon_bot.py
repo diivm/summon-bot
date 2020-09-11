@@ -44,14 +44,20 @@ async def summon_bot(ctx):
     reply = discord.Embed(color=discord.Color.green())
     reply.title = "How to summon?"
     reply.description = """
-    `!summon @username [mode]`
+    Summon:
+        - `!summon @username [mode]`
 
-    mode:
-        - 0: CALL (3 times) -> default
-        - 1: SHOUT (7 times)
-        - 2: SCREAM (15 times)
+        - mode:
+            - `0`: CALL (3 times) -> default
+            - `1`: SHOUT (7 times)
+            - `2`: SCREAM (15 times)
 
-    Frustrated? Just kill them: `!kill @username`
+        - Frustrated? Just kill them: `!kill @username`
+
+    Others:
+        - `genius <n>`: The genius we all love (n times, no limits)
+        - `heart`: Heart of the genius
+        - `wall`: Wall of the genius
     """
 
     await ctx.channel.send(embed=reply)
