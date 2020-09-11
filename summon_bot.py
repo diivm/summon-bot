@@ -2,6 +2,7 @@
 
 import os
 from dotenv import load_dotenv
+
 # import yaml
 import random
 import discord
@@ -9,7 +10,7 @@ from discord.ext import commands
 
 
 bot = commands.Bot(command_prefix="!")
-
+MAX_LENGTH = 60
 
 # with open("config.yaml") as f:
 #    """
@@ -24,8 +25,9 @@ bot = commands.Bot(command_prefix="!")
 
 
 load_dotenv()
-BOT_TOKEN = os.getenv('BOT_TOKEN')
-GUILD_ID = os.getenv('GUILD_ID')
+BOT_TOKEN = os.getenv("BOT_TOKEN")
+GUILD_ID = os.getenv("GUILD_ID")
+
 
 @bot.event
 async def on_ready():
@@ -79,6 +81,53 @@ async def kill(ctx, call_user: str = None):
         reply.description = "Can you kill someone from this server?"
         reply.title = "FOOL SPOTTED"
         await ctx.send(embed=reply)
+
+
+@bot.command(name="genius")
+async def genius(ctx, times: int = 1):
+    emojis_list = bot.emojis
+    send_emoji_name = "noclue"
+    for emoji in emojis_list:
+        if emoji.name == send_emoji_name:
+            if times <= 0:
+                times = 1
+            blocks = times // MAX_LENGTH
+            rem = times % MAX_LENGTH
+            # make MAX_LENGTH emoji blocks
+            stich_60 = ""
+            for _ in range(MAX_LENGTH):
+                stich_60 += f"{emoji}"
+            # send MAX_LENGTH emoji blocks
+            for _ in range(blocks):
+                await ctx.send(stich_60)
+            # send rest
+            stich = ""
+            for _ in range(rem):
+                stich += f"{emoji}"
+            await ctx.send(stich)
+
+
+@bot.command(name="wall")
+async def wall(ctx):
+    await genius(ctx, times=MAX_LENGTH * 10)
+
+
+@bot.command(name="heart")
+async def heart(ctx):
+    emojis_list = bot.emojis
+    send_emoji_name = "noclue"
+    for emoji in emojis_list:
+        if emoji.name == send_emoji_name:
+            dot_5 = "....."
+            emoji_str = f"{emoji}"
+            line_0 = (dot_5) + (emoji_str * 2) + (dot_5) + (emoji_str * 2) + (dot_5)
+            line_1 = (emoji_str) + (dot_5 * 2) + (emoji_str) + (dot_5 * 2) + (emoji_str)
+            line_2 = (emoji_str) + (dot_5 * 5) + (emoji_str)
+            line_3 = (dot_5) + (emoji_str) + (dot_5 * 3) + (emoji_str) + (dot_5)
+            line_4 = (dot_5 * 2) + (emoji_str) + (dot_5) + (emoji_str) + (dot_5 * 2)
+            line_5 = (dot_5 * 3) + (emoji_str) + (dot_5 * 3)
+            for line in (line_0, line_1, line_2, line_3, line_4, line_5):
+                await ctx.send(line)
 
 
 @bot.command(name="summon")
