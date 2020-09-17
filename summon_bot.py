@@ -58,6 +58,7 @@ async def summon_bot(ctx):
         - `genius <n>`: The genius we all love (n times, no limits)
         - `heart`: Heart of the genius
         - `wall`: Wall of the genius
+        - `heart_wall`: Wall of the heart of the genius
     """
 
     await ctx.channel.send(embed=reply)
@@ -144,6 +145,36 @@ async def heart(ctx):
                 # weird discord
                 heart += "."
                 await ctx.send(heart)
+
+
+@bot.command(name="heart_wall")
+async def heart_wall(ctx):
+    emojis_list = bot.emojis
+    send_emoji_name = "noclue"
+    heart = ""
+    for emoji in emojis_list:
+        if emoji.name == send_emoji_name:
+            emoji_str = f"{emoji}" + " "
+            blank_code_2 = "`  `" + " "
+            # fmt: off
+            custom_matrix=[
+                [blank_code_2, emoji_str, emoji_str, blank_code_2, emoji_str, emoji_str, blank_code_2],
+                [emoji_str, blank_code_2, blank_code_2, emoji_str, blank_code_2, blank_code_2, emoji_str],
+                [emoji_str, blank_code_2, blank_code_2, blank_code_2, blank_code_2, blank_code_2, emoji_str],
+                [blank_code_2, emoji_str, blank_code_2, blank_code_2, blank_code_2, emoji_str, blank_code_2],
+                [blank_code_2, blank_code_2, emoji_str, blank_code_2, emoji_str, blank_code_2, blank_code_2],
+                [blank_code_2, blank_code_2, blank_code_2, emoji_str, blank_code_2, blank_code_2, blank_code_2],
+            ]
+            # fmt: on
+            for _ in range(3):
+                for line in custom_matrix:
+                    heart = ""
+                    for sym in line:
+                        heart += sym
+                    # weird discord
+                    heart += "."
+                    heart = heart * 3  # 3 times
+                    await ctx.send(heart)
 
 
 @bot.command(name="summon")
