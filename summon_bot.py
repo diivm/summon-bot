@@ -122,18 +122,28 @@ async def wall(ctx):
 async def heart(ctx):
     emojis_list = bot.emojis
     send_emoji_name = "noclue"
+    heart = ""
     for emoji in emojis_list:
         if emoji.name == send_emoji_name:
-            dot_5 = "....."
-            emoji_str = f"{emoji}"
-            line_0 = (dot_5) + (emoji_str * 2) + (dot_5) + (emoji_str * 2) + (dot_5)
-            line_1 = (emoji_str) + (dot_5 * 2) + (emoji_str) + (dot_5 * 2) + (emoji_str)
-            line_2 = (emoji_str) + (dot_5 * 5) + (emoji_str)
-            line_3 = (dot_5) + (emoji_str) + (dot_5 * 3) + (emoji_str) + (dot_5)
-            line_4 = (dot_5 * 2) + (emoji_str) + (dot_5) + (emoji_str) + (dot_5 * 2)
-            line_5 = (dot_5 * 3) + (emoji_str) + (dot_5 * 3)
-            for line in (line_0, line_1, line_2, line_3, line_4, line_5):
-                await ctx.send(line)
+            emoji_str = f"{emoji}" + " "
+            blank_code_2 = "`  `" + " "
+            # fmt: off
+            custom_matrix=[
+                [blank_code_2, emoji_str, emoji_str, blank_code_2, emoji_str, emoji_str, blank_code_2],
+                [emoji_str, blank_code_2, blank_code_2, emoji_str, blank_code_2, blank_code_2, emoji_str],
+                [emoji_str, blank_code_2, blank_code_2, blank_code_2, blank_code_2, blank_code_2, emoji_str],
+                [blank_code_2, emoji_str, blank_code_2, blank_code_2, blank_code_2, emoji_str, blank_code_2],
+                [blank_code_2, blank_code_2, emoji_str, blank_code_2, emoji_str, blank_code_2, blank_code_2],
+                [blank_code_2, blank_code_2, blank_code_2, emoji_str, blank_code_2, blank_code_2, blank_code_2],
+            ]
+            # fmt: on
+            for line in custom_matrix:
+                heart = ""
+                for sym in line:
+                    heart += sym
+                # weird discord
+                heart += "."
+                await ctx.send(heart)
 
 
 @bot.command(name="summon")
