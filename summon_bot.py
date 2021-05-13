@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import time
 import json
 from dotenv import load_dotenv
 
@@ -19,8 +20,10 @@ credentials = service_account.Credentials.from_service_account_info(
 scoped_credentials = credentials.with_scopes(
     ['https://www.googleapis.com/auth/cloud-platform'])
 
-# Object to interface with GCE
+# Objects to interface with GCE
 instances_client = compute_v1.InstancesClient(credentials=scoped_credentials)
+operations_client = compute_v1.ZoneOperationsClient(
+    credentials=scoped_credentials)
 
 bot = commands.Bot(command_prefix="!")
 MAX_LENGTH = 60
@@ -241,7 +244,97 @@ async def summon(ctx, call_user: str = None, level: int = 0):
 async def mstatus(ctx):
     minecraft_server_status = instances_client.get(
         project='test-salad-2125', zone='asia-south1-a', instance='minecraft')
-    await ctx.send(embed=str(minecraft_server_status.status).split('.')[1])
+
+    reply = discord.Embed()
+    reply.title = "Meincraft Bois"
+    if (minecraft_server_status.status
+            == compute_v1.Instance.Status.TERMINATED):
+        reply.color = discord.Color.red()
+        reply.description = "Server has stopped."
+    elif (minecraft_server_status.status
+          == compute_v1.Instance.Status.STOPPED):
+        reply.color = discord.Color.red()
+        reply.description = "Server has stopped."
+    elif (minecraft_server_status.status
+          == compute_v1.Instance.Status.STOPPING):
+        reply.color = discord.Color.red()
+        reply.description = "Server is stopping."
+    elif (minecraft_server_status.status
+          == compute_v1.Instance.Status.SUSPENDED):
+        reply.color = discord.Color.red()
+        reply.description = "Server is suspended."
+    elif (minecraft_server_status.status
+          == compute_v1.Instance.Status.SUSPENDING):
+        reply.color = discord.Color.red()
+        reply.description = "Server is suspending."
+    elif (minecraft_server_status.status
+          == compute_v1.Instance.Status.RUNNING):
+        reply.color = discord.Color.green()
+        reply.description = "Server is running!"
+    else:
+        reply.color = discord.Color.orange()
+        reply.description = "No instance found. Try deploying using the terraform repo again."
+
+    await ctx.send(embed=reply)
+
+
+@bot.command(name='mstart')
+async def mstart(ctx):
+    start_result = instances_client.start(
+        project='test-salad-2125', zone='asia-south1-a', instance='minecraft')
+    reply_start = discord.Embed()
+    reply_start.title = "Meincraft Bois"
+    if (start_result.error):
+        reply_start.color = discord.Color.red()
+        reply_start.description = start_result.error.errors[0].message
+
+    reply_start.color = discord.Color.green()
+
+    count_start = 0
+    operation_start = operation_status(start_result.id)
+    while(operation_start.status != compute_v1.types.Operation.Status.DONE):
+        reply_start.description = f"Starting server... ({count_start * 5} seconds elapsed)"
+        count_start += 1
+        await ctx.send(embed=reply_start)
+        time.sleep(5)
+        operation_start = operation_status(start_result.id)
+
+    reply_start.color = discord.Color.green()
+    reply_start.description = "Server started!"
+
+    await ctx.send(embed=reply_start)
+
+
+@bot.command(name='mstop')
+async def mstop(ctx):
+    stop_result = instances_client.stop(
+        project='test-salad-2125', zone='asia-south1-a', instance='minecraft')
+    reply_stop = discord.Embed()
+    reply_stop.title = "Meincraft Bois"
+    if (stop_result.error):
+        reply_stop.color = discord.Color.red()
+        reply_stop.description = stop_result.error.errors[0].message
+        await ctx.send(embed=reply_stop)
+
+    reply_stop.color = discord.Color.green()
+
+    count_stop = 0
+    operation_stop = operation_status(stop_result.id)
+    while(operation_stop.status != compute_v1.types.Operation.Status.DONE):
+        reply_stop.description = f"Stopping server... ({count_stop * 5} seconds elapsed)"
+        count_stop += 1
+        await ctx.send(embed=reply_stop)
+        time.sleep(5)
+        operation_stop = operation_status(stop_result.id)
+
+    reply_stop.description = "Server stopped."
+
+    await ctx.send(embed=reply_stop)
+
+
+def operation_status(operation):
+    return operations_client.get(
+        project='test-salad-2125', zone='asia-south1-a', operation=operation)
 
 
 bot.run(BOT_TOKEN)
