@@ -1,13 +1,26 @@
 #!/usr/bin/env python3
 
 import os
+import json
 from dotenv import load_dotenv
 
 # import yaml
 import random
 import discord
 from discord.ext import commands
+from google.oauth2 import service_account
+from google.cloud import compute_v1
 
+
+# GCP Authentication Setup
+json_acct_info = json.loads(os.getenv('GCP_CREDS_JSON'))
+credentials = service_account.Credentials.from_service_account_info(
+    json_acct_info)
+scoped_credentials = credentials.with_scopes(
+    ['https://www.googleapis.com/auth/cloud-platform'])
+
+# Object to interface with GCE
+instances_client = compute_v1.InstancesClient(credentials=scoped_credentials)
 
 bot = commands.Bot(command_prefix="!")
 MAX_LENGTH = 60
@@ -221,6 +234,14 @@ async def summon(ctx, call_user: str = None, level: int = 0):
         reply.description = "Whom do I call again?"
         reply.title = "FOOL SPOTTED"
         await ctx.send(embed=reply)
+
+
+# Minecraft Commands
+@bot.command(name='mstatus')
+async def mstatus(ctx):
+    minecraft_server_status = instances_client.get(
+        project='test-salad-2125', zone='asia-south1-a', instance='minecraft')
+    await ctx.send(embed=str(minecraft_server_status.status).split('.')[1])
 
 
 bot.run(BOT_TOKEN)
