@@ -270,7 +270,7 @@ async def mstatus(ctx):
     elif (minecraft_server_status.status
           == compute_v1.Instance.Status.RUNNING):
         reply.color = discord.Color.green()
-        reply.description = "Server is running!"
+        reply.description = f"Server is running (IP: {minecraft_server_status.network_interfaces[0].access_configs[0].nat_i_p})!"
     else:
         reply.color = discord.Color.orange()
         reply.description = "No instance found. Try deploying using the terraform repo again."
@@ -303,6 +303,7 @@ async def mstart(ctx):
     reply_start.description = "Server started!"
 
     await ctx.send(embed=reply_start)
+    await mstatus(ctx)
 
 
 @bot.command(name='mstop')
