@@ -25,7 +25,8 @@ instances_client = compute_v1.InstancesClient(credentials=scoped_credentials)
 operations_client = compute_v1.ZoneOperationsClient(
     credentials=scoped_credentials)
 
-bot = commands.Bot(command_prefix="!")
+intents = discord.Intents(guilds=True, guild_messages=True, members=True)
+bot = commands.Bot(command_prefix="!", intents=intents)
 MAX_LENGTH = 60
 
 # with open("config.yaml") as f:
@@ -75,6 +76,9 @@ async def summon_bot(ctx):
         - `heart`: Heart of the genius
         - `wall`: Wall of the genius
         - `heart_wall`: Wall of the heart of the genius
+        - `mstart`: Start the minecraft server
+        - `mstop`: Stop the minecraft server
+        - `mstatus`: Get the status of minecraft server
     """
 
     await ctx.channel.send(embed=reply)

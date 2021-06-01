@@ -1,4 +1,4 @@
 python-dotenv==0.14.0
-discord.py==1.4.1
+discord.py==1.7.2
 google-auth==1.30.0
 google-cloud-compute==0.3.0
