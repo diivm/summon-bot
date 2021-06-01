@@ -3,6 +3,7 @@
 import os
 import time
 import json
+import re
 from dotenv import load_dotenv
 
 # import yaml
@@ -202,7 +203,7 @@ async def summon(ctx, call_user: str = None, level: int = 0):
     user_ids = []
     for member in ctx.guild.members:
         user_ids.append(f"{member.id}")
-    call_user_id = call_user[3:-1]
+    call_user_id = re.findall("[0-9]+", call_user)[0]
 
     number = 3
     strs = [f"Yo! {call_user}", f"Hey! {call_user}", f"Listen! {call_user}"]
